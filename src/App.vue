@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <h1>头条</h1>
+    <i class="toutiao toutiao-shouji"></i>
     <router-view />
   </div>
 </template>

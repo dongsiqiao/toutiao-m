@@ -1,6 +1,17 @@
 <template>
   <div class="login-container">
-    <van-nav-bar class="page-nav-bar" title="登录" />
+    <!-- 头部 -->
+    <van-nav-bar class="page-nav-bar" title="登录">
+      <!-- 只有传递了 redirect 这样一个参数，才显示返回按钮 -->
+      <van-icon
+        v-if="$route.query.redirect"
+        slot="left"
+        name="cross"
+        @click="$router.back()"
+      />
+    </van-nav-bar>
+
+    <!-- 表单 -->
     <van-form @submit="onSubmit" ref="loginForm">
       <van-field
         type="number"
@@ -89,12 +100,14 @@ export default {
       const user = this.user
       this.$toast.loading({
         duration: 0,
+        forbidClick: true,
         message: '加载中...'
       })
       try {
         const { data } = await login(user)
         this.$store.commit('setUser', data.data)
         this.$toast.success('登录成功')
+        this.$router.push(this.$route.query.redirect || '/')
       } catch (err) {
         if (err.response.status === 400) {
           this.$toast.fail('手机号或验证码错误')

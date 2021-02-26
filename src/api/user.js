@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 
+// 用户相关请求
 export const login = data => {
   return request({
     method: 'POST',
@@ -7,9 +8,23 @@ export const login = data => {
     data
   })
 }
+
+// 发送验证码
 export const getSmsCode = mobile => {
   return request({
     method: 'GET',
     url: `/app/v1_0/sms/codes/${mobile}`
+  })
+}
+
+// 获取用户自己的信息
+export const getUserInfo = () => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user'
+    // 携带请求头信息
+    /* headers: {
+      Authorization: `Bearer ${store.state.user.token}`
+    } */
   })
 }

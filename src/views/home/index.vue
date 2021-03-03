@@ -9,6 +9,7 @@
         size="small"
         round
         icon="search"
+        to="/search"
         >搜索</van-button
       >
     </van-nav-bar>
@@ -22,27 +23,54 @@
         <article-list :channel="channel"></article-list
       ></van-tab>
       <div slot="nav-right" class="placeholder"></div>
-      <div slot="nav-right" class="hamburger-btn">
+      <div
+        slot="nav-right"
+        class="hamburger-btn"
+        @click="isChannelEditShow = true"
+      >
         <i class="toutiao toutiao-gengduo"></i>
       </div>
     </van-tabs>
+
+    <!-- 频道编辑 -->
+    <van-popup
+      v-model="isChannelEditShow"
+      close-icon-position="top-left"
+      closeable
+      position="bottom"
+      :style="{ height: '100%' }"
+    >
+      <channel-edit
+        :my-channels="channels"
+        :active="active"
+        @update-active="onupdateActive"
+      ></channel-edit>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list'
+import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storage'
 
 export default {
   name: 'HomeIndex',
   components: {
-    ArticleList
+    ArticleList,
+    ChannelEdit
   },
   data() {
     return {
       active: 0,
-      channels: []
+      channels: [],
+      isChannelEditShow: false
     }
+  },
+  computed: {
+    ...mapState(['user'])
   },
   created() {
     this.loadChannels()
@@ -50,11 +78,31 @@ export default {
   methods: {
     async loadChannels() {
       try {
-        const { data } = await getUserChannels()
-        this.channels = data.data.channels
+        let channels = []
+        // 如果登录了
+        if (this.user) {
+          const { data } = await getUserChannels()
+          channels = data.data.channels
+        } else {
+          // 未登录
+          const localChannels = getItem('TOUTIAO_CHANNELS')
+          if (localChannels) {
+            // 本地有，直接用
+            channels = localChannels
+          } else {
+            // 本地没有，未登录则会获取默认频道列表
+            const { data } = await getUserChannels()
+            channels = data.data.channels
+          }
+        }
+        this.channels = channels
       } catch (err) {
-        this.$toast('获取失败')
+        this.$toast('获取频道数据失败')
       }
+    },
+    onupdateActive(index, isChannelEditShow = false) {
+      this.active = index
+      this.isChannelEditShow = isChannelEditShow
     }
   }
 }

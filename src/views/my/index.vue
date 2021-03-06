@@ -4,12 +4,7 @@
     <div v-if="user" class="user-info">
       <div class="base-info">
         <div class="left">
-          <van-image
-            class="avatar"
-            round
-            fit="cover"
-            :src="userInfo.photo"
-          />
+          <van-image class="avatar" round fit="cover" :src="userInfo.photo" />
           <span class="name">{{ userInfo.name }}</span>
         </div>
         <div class="right">
@@ -159,6 +154,9 @@ export default {
           font-size: 30px;
           color: #fff;
         }
+      }
+      .right {
+        line-height: 1;
       }
     }
     .data-stats {

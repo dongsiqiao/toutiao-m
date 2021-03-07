@@ -53,7 +53,10 @@ export default {
         const { data } = await addComment({
           target: this.target.toString(), // 评论的目标 ID（评论文章即为文章ID，对评论进行回复则为评论ID）
           content: this.message, // 评论的内容
-          art_id: this.articleId ? this.articleId.toString() : this.articleId
+          art_id:
+            this.articleId.toString() === this.target.toString()
+              ? null
+              : this.articleId.toString()
         })
         // console.log(data)
         // 关闭弹出层
